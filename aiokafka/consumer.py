@@ -175,13 +175,14 @@ class AIOKafkaConsumer(object):
         # Check Broker Version if not set explicitly
         if self._api_version == 'auto':
             self._api_version = yield from self._client.check_version()
+
         # Convert api_version config to tuple for easy comparisons
-        self._api_version = tuple(
+        api_version_tuple = tuple(
             map(int, self._api_version.split('.')))
 
-        if self._api_version < (0, 9):
+        if api_version_tuple < (0, 9):
             raise ValueError(
-                "Unsupported Kafka version: {}".format(self._api_version))
+                "Unsupported Kafka version: {}".format(api_version_tuple))
 
         self._fetcher = Fetcher(
             self._client, self._subscription, loop=self._loop,
